@@ -14,7 +14,7 @@ module.exports = {
   chainWebpack: config => {
     config.resolve.alias
       .set('@', path.resolve('examples'))
-      .set('~', path.resolve('address-book'))
+      .set('~', path.resolve('v-address-book'))
 
       config.module
       .rule('js')

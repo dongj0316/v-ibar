@@ -1,26 +1,26 @@
 <template>
   <transition name="slide-right">
     <div v-show="currentValue" class="popup-address-book">
-      <address-book
+      <v-address-book
         ref="addressBook"
         :data="mockData"
         search-bar
         @back="$router.back()"
         @cell-click="onCellClick"
         limit-high>
-      </address-book>
+      </v-address-book>
     </div>
   </transition>
 </template>
 
 <script>
 import mockData from '../mock.js'
-import AddressBook from '../../address-book/main'
+import VAddressBook from '../../v-address-book/main'
 
 export default {
   name: 'popup-address-book',
   components: {
-    AddressBook
+    VAddressBook
   },
   props: {
     value: Boolean

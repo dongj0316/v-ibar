@@ -1,15 +1,15 @@
 <template>
   <div
-    class="address-book"
+    class="v-address-book"
     :class="{
-      'address-book--limit-high': limitHigh
+      'v-address-book--limit-high': limitHigh
     }"
   >
 
-    <div ref="scroller" class="address-book__scroller">
+    <div ref="scroller" class="v-address-book__scroller">
       <template v-for="(items, index) in formatData">
         <div
-          class="address-book__letter address-book__letter-index border--b"
+          class="v-address-book__letter v-address-book__letter-index border--b"
           :style="{
             color: !letterBarVisible && index === nextIndex ? highlightColor : 'inherit'
           }"
@@ -18,23 +18,23 @@
           <div
             v-if="index > 0"
             v-show="index === nextIndex && !letterBarVisible"
-            class="address-book__letter__prev border--b"
+            class="v-address-book__letter__prev border--b"
           >
-            <div class="address-book__letter__bg" :style="{ opacity: index === nextIndex ? 1 - letterBgOpacity : 0 }"></div>
-            <div class="address-book__letter__name">{{letters[index - 1]}}</div>
+            <div class="v-address-book__letter__bg" :style="{ opacity: index === nextIndex ? 1 - letterBgOpacity : 0 }"></div>
+            <div class="v-address-book__letter__name">{{letters[index - 1]}}</div>
           </div>
 
           <div
-            class="address-book__letter__bg"
+            class="v-address-book__letter__bg"
             :style="{ opacity: index === nextIndex ? letterBgOpacity : index === activeIndex ? 0 : 1 }"
           >
           </div>
 
-          <div class="address-book__letter__name">{{items.letter}}</div>
+          <div class="v-address-book__letter__name">{{items.letter}}</div>
         </div>
 
         <template v-for="(item, index) in items.list">
-          <div class="address-book__cell" @click="$emit('cell-click', item)" :class="{ 'border--t': index !== 0 }" :key="item[letterKey] + item[nameKey]">
+          <div class="v-address-book__cell" @click="$emit('cell-click', item)" :class="{ 'border--t': index !== 0 }" :key="item[letterKey] + item[nameKey]">
             <slot :item="item">
               {{item[nameKey]}}
             </slot>
@@ -48,14 +48,14 @@
       :style="{
         color: highlightColor
       }"
-      class="address-book__letter address-book__letter--fixed border--b"
+      class="v-address-book__letter v-address-book__letter--fixed border--b"
     >
       {{activeLetter}}
     </div>
 
-    <div v-if="letterNav" class="address-book__nav" :class="{ 'address-book__nav--touching': touching && touchState }">
+    <div v-if="letterNav" class="v-address-book__nav" :class="{ 'v-address-book__nav--touching': touching && touchState }">
       <div
-        class="address-book__nav__touch"
+        class="v-address-book__nav__touch"
         @touchstart.prevent="onTouchstart"
         @touchmove.prevent="onTouchmove"
         @touchend="onTouchend"
@@ -66,7 +66,7 @@
               color: index === activeIndex ? '#fff' : 'inherit',
               background: index === activeIndex ? highlightColor : 'inherit'
             }"
-            class="address-book__nav__letter"
+            class="v-address-book__nav__letter"
             :data-letter="letter"
             :key="letter">
             {{letter}}
@@ -76,14 +76,14 @@
     </div>
 
     <transition name="opacity-fade">
-      <div v-show="touching && touchLetter" class="address-book__tips" :style="{background: highlightColor}">{{touchLetter}}</div>
+      <div v-show="touching && touchLetter" class="v-address-book__tips" :style="{background: highlightColor}">{{touchLetter}}</div>
     </transition>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'address-book',
+  name: 'v-address-book',
   props: {
     limitHigh: Boolean,
     data: {
@@ -218,7 +218,7 @@ export default {
     doLayout () {
       if (this.letterNav) {
         this.innerHeight = window.innerHeight
-        this.letterNavSize = document.querySelector('.address-book__nav__letter').offsetHeight
+        this.letterNavSize = document.querySelector('.v-address-book__nav__letter').offsetHeight
         const letterLen = this.letterLen
         const letterNavTops = []
         const navClientY = (this.innerHeight - this.letterNavSize * letterLen) / 2
@@ -229,7 +229,7 @@ export default {
         this.letterNavTops = letterNavTops
       }
 
-      const letterBars = document.querySelectorAll('.address-book__letter-index')
+      const letterBars = document.querySelectorAll('.v-address-book__letter-index')
       const letterBarTops = []
 
       Array.prototype.forEach.call(letterBars, elm => {
@@ -269,7 +269,7 @@ export default {
 <style lang="less" scoped>
 @defaultBg: #ededed;
 
-.address-book {
+.v-address-book {
   box-sizing: border-box;
   width: 100%;
   overflow: hidden;

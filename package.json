@@ -1,5 +1,5 @@
 {
-  "name": "address-book",
+  "name": "v-address-book",
   "version": "0.1.0",
   "private": false,
   "description": "A a vue address book component",
@@ -9,7 +9,7 @@
     "build": "npm run build-lib && npm run build-demo",
     "lint": "vue-cli-service lint",
     "build-demo": "vue-cli-service build --dest demo",
-    "build-lib": "vue-cli-service build --target lib --name address-book --dest dist address-book/index.js"
+    "build-lib": "vue-cli-service build --target lib --name v-address-book --dest dist v-address-book/index.js"
   },
   "dependencies": {
     "core-js": "^2.6.5",
@@ -53,12 +53,13 @@
   "keyword": [
     "vue",
     "vue address book",
-    "address book"
+    "address book",
+    "v-address-book"
   ],
   "license": "MIT",
-  "main": "dist/address-book.umd.min.js",
+  "main": "dist/v-address-book.umd.min.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/dongj0316/address-book"
+    "url": "https://github.com/dongj0316/vue-address-book"
   }
 }

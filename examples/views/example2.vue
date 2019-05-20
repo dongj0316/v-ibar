@@ -1,17 +1,17 @@
 <template>
   <div class="page-example2">
-    <address-book :data="mockData" :touch-state="false" limit-high></address-book>
+    <v-address-book :data="mockData" :touch-state="false" limit-high></v-address-book>
   </div>
 </template>
 
 <script>
 import mockData from '../mock.js'
-import AddressBook from '../../address-book/main'
+import VAddressBook from '../../v-address-book/main'
 
 export default {
   name: 'page-example2',
   components: {
-    AddressBook
+    VAddressBook
   },
   data () {
     return {

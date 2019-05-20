@@ -1,4 +1,4 @@
-# address-book
+# v-address-book
 vue通讯录组件
 
 [online demo](https://dongj0316.github.io/vue-address-book/demo/)
@@ -13,13 +13,13 @@ $ npm install address-book -S
 
 ```js
 import Vue from 'vue'
-import AddressBook from 'address-book'
+import VAddressBook from 'v-address-book'
 
-Vue.use(AddressBook)
+Vue.use(VAddressBook)
 ```
 
 ``` html
-<address-book :data="addressBookData"/>
+<v-address-book :data="addressBookData"/>
 ```
 
 ## API
