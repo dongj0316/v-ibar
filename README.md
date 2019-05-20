@@ -1,7 +1,7 @@
 # address-book
 vue通讯录组件
 
-[online demo](https://dongj0316.github.io/address-book/demo/)
+[online demo](https://dongj0316.github.io/vue-address-book/demo/)
 
 ## Installation
 
