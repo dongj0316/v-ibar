@@ -8,7 +8,7 @@ vue通讯录组件
 ## Use
 
 ```bash
-$ npm install address-book -S
+$ npm install v-address-book -S
 ```
 
 ```js
@@ -20,6 +20,10 @@ Vue.use(VAddressBook)
 
 ``` html
 <v-address-book :data="addressBookData"/>
+<!-- 插槽 -->
+<v-address-book :data="addressBookData">
+  <slot v-slot="item">{{item.name}}</slot>
+</v-address-book>
 ```
 
 ## API
