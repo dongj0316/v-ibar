@@ -9,28 +9,22 @@
     <div ref="scroller" class="v-address-book__scroller">
       <template v-for="(items, index) in formatData">
         <div
-          class="v-address-book__letter v-address-book__letter-index border--b"
-          :style="{
-            color: !letterBarVisible && index === nextIndex ? highlightColor : 'inherit'
-          }"
+          class="v-address-book__letter v-address-book__letter-index"
+          :style="letterBarHeights[index] ? { height: `${letterBarHeights[index]}px` }: null"
           :key="items.letter"
         >
           <div
-            v-if="index > 0"
-            v-show="index === nextIndex && !letterBarVisible"
-            class="v-address-book__letter__prev border--b"
+            class="v-address-book__letter__name border--b"
+            :class="{'v-address-book__letter__name--fixed': !isInTransition && activeIndex === index}"
+            :style="[
+              index === activeIndex || index === activeIndex - 1 ? transitionBarStyle : null,
+              activeIndex > 0 && index === activeIndex - 1 ? {
+                transform: `translate3d(0, ${letterBarTops[activeIndex] - letterBarTops[index] - letterBarHeights[index]}px, 0)`
+              } : null
+            ]"
           >
-            <div class="v-address-book__letter__bg" :style="{ opacity: index === nextIndex ? 1 - letterBgOpacity : 0 }"></div>
-            <div class="v-address-book__letter__name">{{letters[index - 1]}}</div>
+            {{items.letter}}
           </div>
-
-          <div
-            class="v-address-book__letter__bg"
-            :style="{ opacity: index === nextIndex ? letterBgOpacity : index === activeIndex ? 0 : 1 }"
-          >
-          </div>
-
-          <div class="v-address-book__letter__name">{{items.letter}}</div>
         </div>
 
         <template v-for="(item, index) in items.list">
@@ -43,16 +37,6 @@
       </template>
     </div>
 
-    <div
-      v-show="letterBarVisible && activeIndex > -1"
-      :style="{
-        color: highlightColor
-      }"
-      class="v-address-book__letter v-address-book__letter--fixed border--b"
-    >
-      {{activeLetter}}
-    </div>
-
     <div v-if="letterNav" class="v-address-book__nav" :class="{ 'v-address-book__nav--touching': touching && touchState }">
       <div
         class="v-address-book__nav__touch"
@@ -62,12 +46,9 @@
       >
         <template v-for="(letter, index) in letters">
           <div
-            :style="{
-              color: index === activeIndex ? '#fff' : 'inherit',
-              background: index === activeIndex ? highlightColor : 'inherit'
-            }"
             class="v-address-book__nav__letter"
-            :data-letter="letter"
+            :style="index === activeIndex ? transitionNavStyle : null"
+            :data-index="index"
             :key="letter">
             {{letter}}
           </div>
@@ -76,7 +57,7 @@
     </div>
 
     <transition name="opacity-fade">
-      <div v-show="touching && touchLetter" class="v-address-book__tips" :style="{background: highlightColor}">{{touchLetter}}</div>
+      <div v-show="touching" class="v-address-book__tips" :style="{backgroundColor: highlightColor}">{{letters[touchIndex]}}</div>
     </transition>
   </div>
 </template>
@@ -117,30 +98,31 @@ export default {
   },
   data () {
     return {
-      innerHeight: window.innerHeight,
       ...this.formatFunc(),
       letterBarHeight: 0,
+      letterBarHeights: [],
       letterBarTops: [],
-      letterNavSize: 0,
-      letterNavTops: [],
-      activeLetter: '',
       activeIndex: -1,
-      nextIndex: -1,
-      letterBgOpacity: 1,
-      letterBarVisible: false,
+      isInTransition: false,
       touching: false,
-      touchLetter: ''
+      touchIndex: -1
     }
   },
   computed: {
-    elm () {
+    scroller () {
       return this.limitHigh ? this.$refs.scroller : window
     },
-    minClientY () {
-      return this.letterNavTops[0]
+    transitionBarStyle () {
+      return {
+        color: this.highlightColor,
+        backgroundColor: 'rgb(255, 255, 255)'
+      }
     },
-    maxClientY () {
-      return this.letterNavTops[this.letterLen - 1] + this.letterNavSize
+    transitionNavStyle() {
+      return {
+        color: this.highlightColor,
+        transform: 'scale(1.3)'
+      }
     }
   },
   mounted () {
@@ -148,95 +130,83 @@ export default {
       this.doLayout()
       window.addEventListener('resize', this.doLayout, false)
 
-      this.elm.addEventListener('scroll', this.scroll, false)
+      this.scroller.addEventListener('scroll', this.scroll, false)
     })
   },
   destroyed () {
     window.removeEventListener('resize', this.doLayout)
-    this.elm.removeEventListener('scroll', this.scroll)
+    this.scroller.removeEventListener('scroll', this.scroll)
   },
   methods: {
     scroll () {
       // console.time('a')
-      const scrollTop = this.limitHigh ? this.$refs.scroller.scrollTop : document.documentElement.scrollTop || document.body.scrollTop
+      const scrollTop = this.limitHigh ? this.$refs.scroller.scrollTop : window.pageYOffset
 
       if (scrollTop < 0) {
         return
       }
 
-      const nextIndex = this.letterBarTops.findIndex(t => t > scrollTop)
-      const index = nextIndex === -1 ? this.letterLen - 1 : nextIndex - 1
+      let activeIndex = this.letterBarTops.findIndex((t, i) => t > scrollTop + (this.letterBarHeights[i - 1] || 0)) - 1
+      activeIndex = activeIndex === -2 ? this.letterLen - 1 : activeIndex
+      let isInTransition = false
 
-      let activeLetter = index > -1 ? this.letters[index] : '',
-          letterBgOpacity = 1,
-          letterBarVisible = true,
-          dist;
-
-      if (nextIndex > -1) {
-        if ((dist = this.letterBarTops[nextIndex] - scrollTop) && dist >= 0 && dist <= this.letterBarHeight) {
-          activeLetter = this.letters[nextIndex]
-          letterBgOpacity = dist / this.letterBarHeight
-          letterBarVisible = false
-        }
+      if (activeIndex > -1 && this.letterBarTops[activeIndex] - scrollTop >= 0) {
+        isInTransition = true
       }
 
-      this.nextIndex = nextIndex
-      this.activeIndex = index
-      this.activeLetter = activeLetter
-      this.letterBgOpacity = letterBgOpacity
-      this.letterBarVisible = letterBarVisible
+      this.activeIndex = activeIndex
+      this.isInTransition = isInTransition
 
       // console.timeEnd('a')
     },
     onTouchstart (e) {
       this.touching = true
-      this.touchLetter = e.target.getAttribute('data-letter')
+      this.hasMove = false
+      this.touchIndex = +e.target.dataset.index
     },
     onTouchmove (e) {
-      this.onTouching(e.targetTouches[0].clientY, this.touchDirect)
+      const { clientX, clientY } = e.touches[0]
+
+      this.hasMove = true
+      this.onTouching(clientX, clientY, this.touchDirect)
     },
     onTouchend (e) {
-      this.touching = false
-      this.onTouching(e.changedTouches[0].clientY, true)
-    },
-    onTouching (clientY, touchDirect) {
-      if (clientY < this.minClientY || clientY > this.maxClientY) {
-        return
-      }
-      const activeIndex = this.letterNavTops.findIndex(t => t > clientY) - 1
+      const { clientX, clientY } = e.changedTouches[0]
 
-      this.touchLetter = this.letters[activeIndex]
-      touchDirect && this.scrollTo(this.letterBarTops[activeIndex])
+      this.touching = false
+      this.touchIndex = -1
+      this.onTouching(clientX, clientY, this.hasMove ? !this.touchDirect : true)
+    },
+    onTouching (clientX, clientY, touchDirect) {
+      const activeElem = document.elementFromPoint(clientX, clientY)
+
+      if (activeElem) {
+        const { index } = activeElem.dataset
+        if (index && this.touchIndex !== +index) {
+          this.touchIndex = +index
+          touchDirect && this.scrollTo(this.letterBarTops[index])
+        }
+      }
     },
     scrollTo (top) {
       if (this.limitHigh) {
-        this.elm.scrollTop = top
+        this.scroller.scrollTop = top
       } else {
-        this.elm.scrollTo(0, top)
+        this.scroller.scrollTo(0, top)
       }
     },
     doLayout () {
-      if (this.letterNav) {
-        this.innerHeight = window.innerHeight
-        this.letterNavSize = document.querySelector('.v-address-book__nav__letter').offsetHeight
-        const letterLen = this.letterLen
-        const letterNavTops = []
-        const navClientY = (this.innerHeight - this.letterNavSize * letterLen) / 2
-        let i = -1
-        while (i++ < letterLen) {
-          letterNavTops.push(this.letterNavSize * i + navClientY)
-        }
-        this.letterNavTops = letterNavTops
-      }
-
       const letterBars = document.querySelectorAll('.v-address-book__letter-index')
       const letterBarTops = []
+      const letterBarHeights = []
 
-      Array.prototype.forEach.call(letterBars, elm => {
-        letterBarTops.push(elm.offsetTop)
+      Array.prototype.forEach.call(letterBars, letterbar => {
+        letterBarTops.push(letterbar.offsetTop)
+        letterBarHeights.push(letterbar.offsetHeight)
       })
-      this.letterBarHeight = letterBars[0].offsetHeight
       this.letterBarTops = letterBarTops
+      this.letterBarHeights = letterBarHeights
+      this.letterBarHeight = letterBarHeights[0]
     },
     formatFunc () {
       let formatJson = {}
@@ -290,37 +260,22 @@ export default {
   }
   &__letter {
     position: relative;
-    height: 30px;
     line-height: 30px;
     font-size: 15px;
     font-weight: bold;
-    background: #fff;
-    &--fixed {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      padding: 0 15px;
-    }
-    &__prev {
-      position: absolute;
-      top: -100%;
-      left: 0;
-      width: 100%;
-      background: #fff;
-    }
-    &__bg {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      opacity: 1;
-      background: @defaultBg;
-    }
+    z-index: 500;
     &__name {
       position: relative;
       padding: 0 15px;
+      transform: translate3d(0, 0, 0);
+      background-color: @defaultBg;
+      &--fixed {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 11;
+      }
     }
   }
   &__cell {
@@ -335,23 +290,22 @@ export default {
     right: 0;
     padding: 10px 0;
     text-align: center;
-    font-weight: bold;
     border-radius: 17px;
     transform: translate3d(0, -50%, 0);
+    z-index: 501;
     &--touching {
       background: rgba(0, 0, 0, .1);
     }
     &__touch {
       position: relative;
-      padding: 0 8px;
     }
     &__letter {
-      width: 18px;
-      height: 18px;
+      padding: 0 8px;
       line-height: 18px;
-      font-size: 14px;
+      font-size: 13px;
       border-radius: 50%;
       user-select: none;
+      transform: scale(1);
     }
   }
   &__tips {
@@ -367,6 +321,7 @@ export default {
     font-weight: bold;
     color: #fff;
     transform: translate3d(-50%, -50%, 0);
+    z-index: 501;
   }
 
   .border--t:before {

@@ -1,6 +1,6 @@
 <template>
   <div class="page-example1">
-    <v-address-book :data="mockData"></v-address-book>
+    <v-address-book :data="mockData" :touchDirect="false"></v-address-book>
   </div>
 </template>
 
