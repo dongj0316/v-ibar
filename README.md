@@ -39,6 +39,7 @@ Vue.use(VAddressBook)
 | touch-state | Boolean | 右侧导航触摸态 | N | true |
 | touch-direct | Boolean | 滚动位置是否随导航触摸位置立即生效 | N | true |
 | highlight-color | String | 高亮颜色值 | N | #07c160 |
+| fixed-top | Number | 吸顶top值 | N | 0 |
 
 #### instance methods:
 - `scrollTo()` 滚动到指定位置

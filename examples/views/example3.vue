@@ -12,7 +12,7 @@
       @search="onSearch"
       @back="$router.back()"
     />
-    <v-address-book ref="addressBook" :data="mockData" @cell-click="onCellClick" limitHigh></v-address-book>
+    <v-address-book ref="addressBook" :data="mockData" @cell-click="onCellClick" limitHigh :fixedTop="54"></v-address-book>
 
     <transition name="opacity-fade">
       <div v-show="isFocus" @click="$refs.searchBar.blur()" @touchmove.prevent class="search-overlay"></div>

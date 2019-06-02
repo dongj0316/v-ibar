@@ -20,7 +20,8 @@
               index === activeIndex || index === activeIndex - 1 ? transitionBarStyle : null,
               activeIndex > 0 && index === activeIndex - 1 ? {
                 transform: `translate3d(0, ${letterBarTops[activeIndex] - letterBarTops[index] - letterBarHeights[index]}px, 0)`
-              } : null
+              } : null,
+              !isInTransition && activeIndex === index ? { top: `${fixedTop}px` } : null
             ]"
           >
             {{items.letter}}
@@ -94,6 +95,10 @@ export default {
     touchDirect: {
       type: Boolean,
       default: true
+    },
+    fixedTop: {
+      type: Number,
+      default: 0
     }
   },
   data () {
@@ -259,22 +264,20 @@ export default {
     -webkit-overflow-scrolling: touch;
   }
   &__letter {
-    position: relative;
     line-height: 30px;
     font-size: 15px;
     font-weight: bold;
-    z-index: 500;
     &__name {
       position: relative;
       padding: 0 15px;
       transform: translate3d(0, 0, 0);
       background-color: @defaultBg;
+      z-index: 500;
       &--fixed {
         position: fixed;
         top: 0;
         left: 0;
         right: 0;
-        z-index: 11;
       }
     }
   }
