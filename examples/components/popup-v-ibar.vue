@@ -1,39 +1,45 @@
 <template>
   <transition name="slide-right">
-    <div v-show="currentValue" class="popup-address-book">
-      <v-address-book
-        ref="addressBook"
-        :data="mockData"
-        search-bar
-        @back="$router.back()"
-        @cell-click="onCellClick"
-        limit-high>
-      </v-address-book>
-    </div>
+    <template v-if="rendered">
+      <div v-show="currentValue" class="popup-v-ibar">
+        <v-ibar
+          ref="vibar"
+          scrollElement=".popup-v-ibar"
+          :data="mockData"
+        >
+          <template v-slot="slotProps">
+            <div @click="onCellClick(slotProps.item)" class="cell">
+              {{ slotProps.item.name }}
+            </div>
+          </template>
+        </v-ibar>
+      </div>
+    </template>
   </transition>
 </template>
 
 <script>
 import mockData from '../mock.js'
-import VAddressBook from '../../v-address-book/main'
+import VIbar from '../../v-ibar/main'
 
 export default {
-  name: 'popup-address-book',
+  name: 'popup-v-ibar',
   components: {
-    VAddressBook
+    VIbar
   },
   props: {
     value: Boolean
   },
   data () {
     return {
+      rendered: this.value,
       currentValue: this.value,
       mockData
     }
   },
   methods: {
     onCellClick (item) {
-      this.$eventBus.$emit('on-address-book-select', item)
+      this.$eventBus.$emit('on-v-ibar-select', item)
       this.$router.back()
     }
   },
@@ -43,10 +49,13 @@ export default {
     },
     currentValue (vl) {
       if (vl) {
-        this.$nextTick(function () {
-          this.$refs.addressBook.scrollTo(0)
-          this.$refs.addressBook.doLayout()
-        })
+        if (this.rendered) {
+          this.$nextTick(function () {
+            this.$refs.vibar.scrollTo(0)
+            this.$refs.vibar.doLayout()
+          })
+        }
+        this.rendered = vl
       }
       this.$emit('input', vl)
     }
@@ -55,14 +64,16 @@ export default {
 </script>
 
 <style lang="less">
-.popup-address-book {
+.popup-v-ibar {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: #ccc;
-  overflow: hidden;
+  background: #f0f5f9;
+  -webkit-overflow-scrolling: touch;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 @keyframes slide-right-enter {

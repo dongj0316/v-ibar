@@ -1,15 +1,15 @@
 {
-  "name": "v-address-book",
-  "version": "0.2.2",
+  "name": "v-ibar",
+  "version": "0.2.3",
   "private": false,
-  "description": "A a vue address book component",
-  "author": "dj1811",
+  "description": "A a vue index bar component",
+  "author": "dongj0316",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "npm run build-lib && npm run build-demo",
     "lint": "vue-cli-service lint",
     "build-demo": "vue-cli-service build --dest demo",
-    "build-lib": "vue-cli-service build --target lib --name v-address-book --dest dist v-address-book/index.js"
+    "build-lib": "vue-cli-service build --target lib --name v-ibar --dest dist v-ibar/index.js"
   },
   "dependencies": {
     "core-js": "^2.6.5",
@@ -52,14 +52,14 @@
   ],
   "keyword": [
     "vue",
-    "vue address book",
-    "address book",
-    "v-address-book"
+    "vue index bar",
+    "index bar",
+    "v-ibar"
   ],
   "license": "MIT",
-  "main": "dist/v-address-book.umd.min.js",
+  "main": "dist/v-ibar.umd.min.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/dongj0316/vue-address-book"
+    "url": "https://github.com/dongj0316/v-ibar"
   }
 }

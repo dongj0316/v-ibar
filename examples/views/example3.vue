@@ -12,7 +12,13 @@
       @search="onSearch"
       @back="$router.back()"
     />
-    <v-address-book ref="addressBook" :data="mockData" @cell-click="onCellClick" limitHigh :fixedTop="54"></v-address-book>
+    <v-ibar ref="vibar" :data="mockData" @cell-click="onCellClick" :fixedTop="54">
+      <template v-slot="slotProps">
+        <div class="cell">
+          {{ slotProps.item.name }}
+        </div>
+      </template>
+    </v-ibar>
 
     <transition name="opacity-fade">
       <div v-show="isFocus" @click="$refs.searchBar.blur()" @touchmove.prevent class="search-overlay"></div>
@@ -21,9 +27,7 @@
     <div v-show="hasSearchResult" class="search-result">
       <template v-for="(item, index) in searchList">
         <div class="search-result__cell" @click="onCellClick(item)" :class="{ 'border--t': index !== 0 }" :key="item.letter + item.name">
-          <slot :item="item">
-            {{item.name}}
-          </slot>
+          {{item.name}}
         </div>
       </template>
     </div>
@@ -32,13 +36,13 @@
 
 <script>
 import mockData from '../mock.js'
-import VAddressBook from '../../v-address-book/main'
+import VIbar from '../../v-ibar/main'
 import SearchBar from '../components/search-bar'
 
 export default {
   name: 'page-example3',
   components: {
-    VAddressBook,
+    VIbar,
     SearchBar
   },
   data () {
@@ -64,7 +68,9 @@ export default {
       this.searchList = searchList
     },
     onCellClick (item) {
-      console.log(item)
+      this.$refs.vibar.scrollTo(item)
+      this.$refs.searchBar.cancel()
+      this.searchList = []
     }
   }
 }
@@ -72,13 +78,7 @@ export default {
 
 <style lang="less">
 .page-example3 {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
   padding-top: 54px;
-  overflow: hidden;
   .search-overlay {
     position: fixed;
     top: 0;

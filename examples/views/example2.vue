@@ -1,17 +1,23 @@
 <template>
   <div class="page-example2">
-    <v-address-book :data="mockData" :touch-state="false" limit-high></v-address-book>
+    <v-ibar :data="mockData" :touch-state="false" limit-high>
+      <template v-slot="slotProps">
+        <div class="cell">
+          {{ slotProps.item.name }}
+        </div>
+      </template>
+    </v-ibar>
   </div>
 </template>
 
 <script>
 import mockData from '../mock.js'
-import VAddressBook from '../../v-address-book/main'
+import VIbar from '../../v-ibar/main'
 
 export default {
   name: 'page-example2',
   components: {
-    VAddressBook
+    VIbar
   },
   data () {
     return {
@@ -23,10 +29,5 @@ export default {
 
 <style lang="less">
 .page-example2 {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
 }
 </style>

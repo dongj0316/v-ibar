@@ -125,7 +125,7 @@ export default {
   overflow: hidden;
   background: @defaultBg;
   &--fixed {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;

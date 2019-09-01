@@ -1,17 +1,23 @@
 <template>
   <div class="page-example1">
-    <v-address-book :data="mockData" :touchDirect="false"></v-address-book>
+    <v-ibar :data="mockData" :touchDirect="false">
+      <template v-slot="slotProps">
+        <div class="cell">
+          {{ slotProps.item.name }}
+        </div>
+      </template>
+    </v-ibar>
   </div>
 </template>
 
 <script>
 import mockData from '../mock.js'
-import VAddressBook from '../../v-address-book/main'
+import VIbar from '../../v-ibar/main'
 
 export default {
   name: 'page-example1',
   components: {
-    VAddressBook
+    VIbar
   },
   data () {
     return {

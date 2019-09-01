@@ -1,13 +1,14 @@
 const data = []
 
 for (let i = 65; i < 91; i++) {
-  const letter = String.fromCharCode(i)
+  const anchor = String.fromCharCode(i)
   // const len = i === 90 ? 20 : ~~(Math.random()*20)
-  const len = ~~(Math.random()*20)
+  // const len = ~~(Math.random()*20)
+  const len = 3
   for (let i = 0; i < len; i++) {
     const item = {
-      letter,
-      name: `${letter} -- ${i}`
+      anchor,
+      name: `${anchor} -- ${i}`
     }
     data.push(item)
   }
