@@ -11,13 +11,13 @@
         >
           <div
             class="v-ibar__anchor border--b"
-            :class="{
-              'v-ibar__anchor--active': !isInTransition && activeIndex === index
-            }"
             :style="[
-              (index === activeIndex || index === prevIndex) && transitionBarStyle,
-              {
+              (index === activeIndex || index === prevIndex) && {
+                ...transitionBarStyle,
                 transform: `translate3d(0, ${transY(index)}px, 0)`
+              },
+              !isInTransition && activeIndex === index && {
+                position: 'fixed'
               }
             ]"
           >
@@ -261,9 +261,6 @@ export default {
     padding: 5px 15px;
     font-weight: bold;
     z-index: @zIndex;
-    &--active {
-      position: fixed;
-    }
   }
   &__nav {
     position: fixed;
